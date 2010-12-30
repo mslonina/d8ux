@@ -1,0 +1,119 @@
+<?php
+// $Id$
+
+/**
+ * Implements hook_FORM_ID_alter().
+ */
+function d8ux_form_user_profile_form_alter(&$form, &$form_state, $form_id) {
+
+  global $user;
+
+  $account = $form['#user'];
+  $register = ($form['#user']->uid > 0 ? FALSE : TRUE);
+  
+  $admin = user_access('administer users');
+  
+  $js = drupal_get_path('module', 'd8ux') . '/d8ux.js';
+
+  if ($form['#user_category'] == 'account') {
+    
+    // Create vertical tabs group
+    $form['d8ux_user_settings'] = array(
+      '#title' => t('User Settings'),
+      '#type' => 'vertical_tabs',
+      '#weight' => 50,
+    );
+
+    // Put username/password to fieldset
+    $form['account'] += array(
+      '#title' => t('Username and password'),
+      '#type' => 'fieldset',
+    );
+
+    // Move Roles and status to vertical tabs
+    $form['account_roles_status'] = array(
+      '#title' => t('Roles and status'),
+      '#type' => 'fieldset',
+      '#group' => 'd8ux_user_settings',
+      '#access' => $admin,
+    );
+    $form['account_roles_status']['status'] = $form['account']['status'];
+    $form['account_roles_status']['roles'] = $form['account']['roles'];
+    $form['account_roles_status'] += array(
+      '#attributes' => array(
+        'class' => array('d8ux-user-form-account-roles-status'),
+      ),
+      '#attached' => array(
+        'js' => array($js),
+      ),
+    );
+
+    $form['account']['roles'] = '';
+    $form['account']['status'] = '';
+
+    // Signature settings
+    $form['signature_settings'] += array(
+      '#group' => 'd8ux_user_settings',
+      '#weight' => 55,
+    );
+
+    // Picture settings
+    $form['picture'] += array(
+      '#group' => 'd8ux_user_settings',
+      '#weight' => 50,
+    );
+
+    // Personal contact form settings
+    if (module_exists('contact')) {
+      $form['contact']['#collapsible'] = FALSE;
+      $form['contact']['#group'] = 'd8ux_user_settings';
+      $form['contact'] += array(
+        '#attributes' => array(
+          'class' => array('d8ux-user-form-personal-contact-form'),
+        ),
+        '#attached' => array(
+          'js' => array($js),
+        ),
+        '#weight' => 60,
+      );
+
+    }
+
+    // Administrative overlay
+    if (module_exists('overlay')) {
+      $form['overlay_control']['#group'] = 'd8ux_user_settings';
+      $form['overlay_control']['#collapsible'] = FALSE;
+      $form['overlay_control'] += array(
+        '#attributes' => array(
+          'class' => array('d8ux-user-form-administrative-overlay'),
+        ),
+        '#attached' => array(
+          'js' => array($js),
+        ),
+        '#weight' => 70,
+      );
+
+    }
+
+    // Custom blocks
+    if (module_exists('block')) {
+      $form['block']['#group'] = 'd8ux_user_settings';
+      $form['block']['#collapsible'] = FALSE;
+      $form['block']['#weight'] = 80;
+    }
+
+    // Timezone
+    $form['timezone']['#group'] = 'd8ux_user_settings';
+    $form['timezone']['#collapsible'] = FALSE;
+    $form['timezone'] += array(
+      '#attributes' => array(
+        'class' => array('d8ux-user-form-timezone'),
+      ),
+      //'#attached' => array(
+      //  'js' => array($js),
+      //),
+    );
+
+  }
+}
+
