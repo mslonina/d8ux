@@ -1,0 +1,47 @@
+<?php
+// $Id$
+
+function d8ux_account_field_extra_fields() {
+
+  if (module_exists('overlay')) {
+    $extra['user']['user']['form']['overlay_control'] = array(
+      'label' => 'Administrative overlay',
+      'description' => t('Overlay module form element.'),
+      'weight' => 0,
+    );
+  }
+
+  if (module_exists('block')) {
+    $extra['user']['user']['form']['block'] = array(
+      'label' => 'Personalize blocks',
+      'description' => t('Block module form element.'),
+      'weight' => 0,
+    );
+  }
+  
+  if (module_exists('contact')) {
+    $extra['user']['user']['form']['contact'] = array(
+      'label' => 'Contact',
+      'description' => t('Contact module form element.'),
+      'weight' => 0,
+    );
+  }
+
+  if (variable_get('user_pictures', 1) == 1) {
+    $extra['user']['user']['form']['picture'] = array(
+      'label' => 'User picture',
+      'description' => t('User module picture form element.'),
+      'weight' => 0,
+    );
+  }
+  
+  if (variable_get('user_signatures', 1) == 1) {
+    $extra['user']['user']['form']['signature_settings'] = array(
+      'label' => 'User signature',
+      'description' => t('User module signature form element.'),
+      'weight' => 0,
+    );
+  }
+
+  return $extra;
+}
