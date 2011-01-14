@@ -1,6 +1,9 @@
 <?php
 // $Id$
 
+/**
+ * Implements hook_field_extra_fields().
+ */
 function d8ux_account_field_extra_fields() {
 
   if (module_exists('overlay')) {
