@@ -2,12 +2,41 @@
 // $Id$
 
 /**
+ * Implements hook_permission().
+ */
+function d8ux_permission() {
+  return array(
+    'administer d8ux' => array(
+      'title' => t('Administer D8UX'),
+    ),
+  );
+}
+
+/**
+ * Implements hook_menu().
+ */
+function d8ux_menu() {
+  $items['admin/config/user-interface/d8ux'] = array(
+    'title' => 'D8UX settings',
+    'description' => 'Configure D8UX.',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('d8ux_admin_settings'),
+    'access arguments' => array('administer d8ux'),
+    'file' => 'd8ux.admin.inc',
+    'weight' => -10,
+  );
+
+  return $items;
+}
+
+/**
  * Implements hook_FORM_ID_alter().
  */
 function d8ux_form_user_profile_form_alter(&$form, &$form_state, $form_id) {
 
   global $user;
 
+  if (variable_get('d8ux_edit_account_vertical_tabs', 0)) {
   $account = $form['#user'];
   $register = ($form['#user']->uid > 0 ? FALSE : TRUE);
   
@@ -36,6 +65,7 @@ function d8ux_form_user_profile_form_alter(&$form, &$form_state, $form_id) {
       '#type' => 'fieldset',
       '#group' => 'd8ux_user_settings',
       '#access' => $admin,
+      '#weight' => -10,
     );
     $form['account_roles_status']['status'] = $form['account']['status'];
     $form['account_roles_status']['roles'] = $form['account']['roles'];
@@ -54,13 +84,11 @@ function d8ux_form_user_profile_form_alter(&$form, &$form_state, $form_id) {
     // Signature settings
     $form['signature_settings'] += array(
       '#group' => 'd8ux_user_settings',
-      '#weight' => 55,
     );
 
     // Picture settings
     $form['picture'] += array(
       '#group' => 'd8ux_user_settings',
-      '#weight' => 50,
     );
 
     // Personal contact form settings
@@ -74,7 +102,6 @@ function d8ux_form_user_profile_form_alter(&$form, &$form_state, $form_id) {
         '#attached' => array(
           'js' => array($js),
         ),
-        '#weight' => 60,
       );
 
     }
@@ -90,7 +117,6 @@ function d8ux_form_user_profile_form_alter(&$form, &$form_state, $form_id) {
         '#attached' => array(
           'js' => array($js),
         ),
-        '#weight' => 70,
       );
 
     }
@@ -99,7 +125,6 @@ function d8ux_form_user_profile_form_alter(&$form, &$form_state, $form_id) {
     if (module_exists('block')) {
       $form['block']['#group'] = 'd8ux_user_settings';
       $form['block']['#collapsible'] = FALSE;
-      $form['block']['#weight'] = 80;
     }
 
     // Timezone
@@ -109,11 +134,125 @@ function d8ux_form_user_profile_form_alter(&$form, &$form_state, $form_id) {
       '#attributes' => array(
         'class' => array('d8ux-user-form-timezone'),
       ),
-      //'#attached' => array(
-      //  'js' => array($js),
-      //),
     );
 
+    //$form['#groups']['group_d8ux_user_settings']['#group'] = 'd8ux_user_settigs';
+  }
+  }
+  //debug($form);
+}
+
+/**
+ * Implements hook_page_alter().
+ * see http://cyrve.com/d7render
+ * @todo
+ * - move to D8UX module
+ */
+function d8ux_page_alter(&$page) {
+  if (module_exists('toolbar')) {
+    if (variable_get('d8ux_toolbar_edit_account_link', 0)) {
+      $page['page_top']['toolbar']['#pre_render'][0] = 'd8ux_toolbar_pre_render';
+    }
   }
 }
 
+/**
+ * Implements hook_pre_render().
+ * @todo
+ * - create settings page to add links (?)
+ * - create setting to see edit account link
+ */
+function d8ux_toolbar_pre_render($toolbar) {
+  global $user;
+  
+  $build = toolbar_view();
+
+  if ($user->uid) {
+    $links = array(
+      'account' => array(
+        'title' => t('Hello <strong>@username</strong>', array('@username' => format_username($user))),
+        'href' => 'user',
+        'html' => TRUE,
+        'attributes' => array('title' => t('User account')),
+      ),
+      'account_edit' => array(
+        'title' => 'Edit account',
+        'href' => "user/$user->uid/edit",
+        'html' => true,
+        'attributes' => array('title' => 'Edit user account'),
+      ),
+      'logout' => array(
+        'title' => t('Log out'),
+        'href' => 'user/logout',
+      ),
+    );
+  } 
+  else {
+    $links = array(
+      'login' => array(
+        'title' => t('Log in'),
+        'href' => 'user',
+      ),
+    );
+  }
+
+  $build['toolbar_user']['#links'] = $links; 
+
+  $toolbar = array_merge($toolbar, $build);
+
+  return $toolbar;
+}
+
+/**
+ * Implements hook_field_extra_fields().
+ */
+function d8ux_field_extra_fields() {
+
+  $extra['user']['user']['form']['d8ux_user_settings'] = array(
+    'label' => 'User settings group',
+    'description' => t('Vertical tabs on user account edit page.'),
+    'weight' => 0,
+  );
+
+  if (module_exists('overlay')) {
+    $extra['user']['user']['form']['overlay_control'] = array(
+      'label' => 'Administrative overlay',
+      'description' => t('Overlay module form element.'),
+      'weight' => 0,
+    );
+  }
+
+  if (module_exists('block')) {
+    $extra['user']['user']['form']['block'] = array(
+      'label' => 'Personalize blocks',
+      'description' => t('Block module form element.'),
+      'weight' => 0,
+    );
+  }
+  
+  if (module_exists('contact')) {
+    $extra['user']['user']['form']['contact'] = array(
+      'label' => 'Contact',
+      'description' => t('Contact module form element.'),
+      'weight' => 0,
+    );
+  }
+
+  if (variable_get('user_pictures', 1) == 1) {
+    $extra['user']['user']['form']['picture'] = array(
+      'label' => 'User picture',
+      'description' => t('User module picture form element.'),
+      'weight' => 0,
+    );
+  }
+  
+  if (variable_get('user_signatures', 1) == 1) {
+    $extra['user']['user']['form']['signature_settings'] = array(
+      'label' => 'User signature',
+      'description' => t('User module signature form element.'),
+      'weight' => 0,
+    );
+  }
+
+  return $extra;
+}

@@ -5,4 +5,6 @@ core = 7.x
 
 files[] = d8ux.module
 files[] = d8ux.install
+files[] = d8ux.pages.inc
+files[] = d8ux.admin.inc
 files[] = d8ux.js
