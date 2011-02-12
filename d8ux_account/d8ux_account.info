@@ -1,7 +1,0 @@
-; $Id$
-name = d8ux_account
-description = User Account Edit Page Improvements
-package = d8ux
-core = 7.x
-
-files[] = d8ux_account.module

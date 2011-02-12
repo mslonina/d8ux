@@ -1,6 +1,6 @@
 name = d8ux
 description = D7UX which is not in D7 core
-package = d8ux
+package = D8 Backport
 core = 7.x
 
 files[] = d8ux.module

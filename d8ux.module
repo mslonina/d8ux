@@ -32,121 +32,119 @@ function d8ux_menu() {
 /**
  * Implements hook_FORM_ID_alter().
  */
-function d8ux_form_user_profile_form_alter(&$form, &$form_state, $form_id) {
+/*function d8ux_form_user_profile_form_alter(&$form, &$form_state, $form_id) {
 
   global $user;
 
   if (variable_get('d8ux_edit_account_vertical_tabs', 0)) {
-  $account = $form['#user'];
-  $register = ($form['#user']->uid > 0 ? FALSE : TRUE);
+    $account = $form['#user'];
+    $register = ($form['#user']->uid > 0 ? FALSE : TRUE);
   
-  $admin = user_access('administer users');
+    $admin = user_access('administer users');
   
-  $js = drupal_get_path('module', 'd8ux') . '/d8ux.js';
+    $js = drupal_get_path('module', 'd8ux') . '/d8ux.js';
 
-  if ($form['#user_category'] == 'account') {
-    
-    // Create vertical tabs group
-    $form['d8ux_user_settings'] = array(
-      '#title' => t('User Settings'),
-      '#type' => 'vertical_tabs',
-      '#weight' => 50,
-    );
+    if ($form['#user_category'] == 'account') {
+      
+      // Create vertical tabs group
+      $form['d8ux_user_settings'] = array(
+        '#title' => t('User Settings'),
+        '#type' => 'vertical_tabs',
+        '#weight' => 50,
+      );
 
-    // Put username/password to fieldset
-    $form['account'] += array(
-      '#title' => t('Username and password'),
-      '#type' => 'fieldset',
-    );
+      // Put username/password to fieldset
+      $form['account'] += array(
+        '#title' => t('Username and password'),
+        '#type' => 'fieldset',
+      );
 
-    // Move Roles and status to vertical tabs
-    $form['account_roles_status'] = array(
-      '#title' => t('Roles and status'),
-      '#type' => 'fieldset',
-      '#group' => 'd8ux_user_settings',
-      '#access' => $admin,
-      '#weight' => -10,
-    );
-    $form['account_roles_status']['status'] = $form['account']['status'];
-    $form['account_roles_status']['roles'] = $form['account']['roles'];
-    $form['account_roles_status'] += array(
-      '#attributes' => array(
-        'class' => array('d8ux-user-form-account-roles-status'),
-      ),
-      '#attached' => array(
-        'js' => array($js),
-      ),
-    );
-
-    $form['account']['roles'] = '';
-    $form['account']['status'] = '';
-
-    // Signature settings
-    $form['signature_settings'] += array(
-      '#group' => 'd8ux_user_settings',
-    );
-
-    // Picture settings
-    $form['picture'] += array(
-      '#group' => 'd8ux_user_settings',
-    );
-
-    // Personal contact form settings
-    if (module_exists('contact')) {
-      $form['contact']['#collapsible'] = FALSE;
-      $form['contact']['#group'] = 'd8ux_user_settings';
-      $form['contact'] += array(
+      // Move Roles and status to vertical tabs
+      $form['account_roles_status'] = array(
+        '#title' => t('Roles and status'),
+        '#type' => 'fieldset',
+        '#group' => 'd8ux_user_settings',
+        '#access' => $admin,
+        '#weight' => -10,
+      );
+      $form['account_roles_status']['status'] = $form['account']['status'];
+      $form['account_roles_status']['roles'] = $form['account']['roles'];
+      $form['account_roles_status'] += array(
         '#attributes' => array(
-          'class' => array('d8ux-user-form-personal-contact-form'),
+          'class' => array('d8ux-user-form-account-roles-status'),
         ),
         '#attached' => array(
           'js' => array($js),
         ),
       );
 
-    }
+      $form['account']['roles'] = '';
+      $form['account']['status'] = '';
 
-    // Administrative overlay
-    if (module_exists('overlay')) {
-      $form['overlay_control']['#group'] = 'd8ux_user_settings';
-      $form['overlay_control']['#collapsible'] = FALSE;
-      $form['overlay_control'] += array(
+      // Signature settings
+      $form['signature_settings'] += array(
+        '#group' => 'd8ux_user_settings',
+      );
+
+      // Picture settings
+      $form['picture'] += array(
+        '#group' => 'd8ux_user_settings',
+      );
+
+      // Personal contact form settings
+      if (module_exists('contact')) {
+        $form['contact']['#collapsible'] = FALSE;
+        $form['contact']['#group'] = 'd8ux_user_settings';
+        $form['contact'] += array(
+          '#attributes' => array(
+            'class' => array('d8ux-user-form-personal-contact-form'),
+          ),
+          '#attached' => array(
+            'js' => array($js),
+          ),
+        );
+
+      }
+
+      // Administrative overlay
+      if (module_exists('overlay')) {
+        $form['overlay_control']['#group'] = 'd8ux_user_settings';
+        $form['overlay_control']['#collapsible'] = FALSE;
+        $form['overlay_control'] += array(
+          '#attributes' => array(
+            'class' => array('d8ux-user-form-administrative-overlay'),
+          ),
+          '#attached' => array(
+            'js' => array($js),
+          ),
+        );
+
+      }
+
+      // Custom blocks
+      if (module_exists('block')) {
+        $form['block']['#group'] = 'd8ux_user_settings';
+        $form['block']['#collapsible'] = FALSE;
+      }
+
+      // Timezone
+      $form['timezone']['#group'] = 'd8ux_user_settings';
+      $form['timezone']['#collapsible'] = FALSE;
+      $form['timezone'] += array(
         '#attributes' => array(
-          'class' => array('d8ux-user-form-administrative-overlay'),
-        ),
-        '#attached' => array(
-          'js' => array($js),
+          'class' => array('d8ux-user-form-timezone'),
         ),
       );
 
+      //$form['#groups']['group_d8ux_user_settings']['#group'] = 'd8ux_user_settigs';
     }
-
-    // Custom blocks
-    if (module_exists('block')) {
-      $form['block']['#group'] = 'd8ux_user_settings';
-      $form['block']['#collapsible'] = FALSE;
     }
-
-    // Timezone
-    $form['timezone']['#group'] = 'd8ux_user_settings';
-    $form['timezone']['#collapsible'] = FALSE;
-    $form['timezone'] += array(
-      '#attributes' => array(
-        'class' => array('d8ux-user-form-timezone'),
-      ),
-    );
-
-    //$form['#groups']['group_d8ux_user_settings']['#group'] = 'd8ux_user_settigs';
-  }
-  }
   //debug($form);
-}
+}*/
 
 /**
  * Implements hook_page_alter().
  * see http://cyrve.com/d7render
- * @todo
- * - move to D8UX module
  */
 function d8ux_page_alter(&$page) {
   if (module_exists('toolbar')) {
@@ -158,9 +156,6 @@ function d8ux_page_alter(&$page) {
 
 /**
  * Implements hook_pre_render().
- * @todo
- * - create settings page to add links (?)
- * - create setting to see edit account link
  */
 function d8ux_toolbar_pre_render($toolbar) {
   global $user;
@@ -207,12 +202,6 @@ function d8ux_toolbar_pre_render($toolbar) {
  * Implements hook_field_extra_fields().
  */
 function d8ux_field_extra_fields() {
-
-  $extra['user']['user']['form']['d8ux_user_settings'] = array(
-    'label' => 'User settings group',
-    'description' => t('Vertical tabs on user account edit page.'),
-    'weight' => 0,
-  );
 
   if (module_exists('overlay')) {
     $extra['user']['user']['form']['overlay_control'] = array(
