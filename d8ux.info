@@ -9,3 +9,4 @@ files[] = d8ux.install
 files[] = d8ux.pages.inc
 files[] = d8ux.admin.inc
 files[] = d8ux.js
+stylesheets[all][] = d8ux.css

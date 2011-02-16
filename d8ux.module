@@ -162,15 +162,22 @@ function d8ux_toolbar_pre_render($toolbar) {
   
   $build = toolbar_view();
 
+  $module_path = drupal_get_path('module', 'd8ux');
+
   if ($user->uid) {
     $links = array(
       'account' => array(
         'title' => t('Hello <strong>@username</strong>', array('@username' => format_username($user))),
         'href' => 'user',
         'html' => TRUE,
-        'attributes' => array('title' => t('User account')),
+        'attributes' => array(
+          'title' => t('User account'),
+          'class' => array(
+            '' => 'parent',
+          ),
+        ),
       ),
-      'account_edit' => array(
+      'account edit' => array(
         'title' => 'Edit account',
         'href' => "user/$user->uid/edit",
         'html' => true,
@@ -192,6 +199,7 @@ function d8ux_toolbar_pre_render($toolbar) {
   }
 
   $build['toolbar_user']['#links'] = $links; 
+  $build['#attached']['css'][] = $module_path . '/d8ux_toolbar.css';
 
   $toolbar = array_merge($toolbar, $build);
 
