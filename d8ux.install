@@ -18,3 +18,14 @@ function d8ux_install() {
 
 }
 
+function d8ux_uninstall() {
+  $variables = array(
+    'd8ux_toolbar_edit_account_link',
+    'd8ux_consistent_fieldsets',
+  );
+
+  foreach ($variables as $variable) {
+    variable_del($variable);
+  }
+}
+

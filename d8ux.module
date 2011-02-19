@@ -32,6 +32,31 @@ function d8ux_menu() {
 /**
  * Implements hook_FORM_ID_alter().
  */
+function d8ux_form_user_profile_form_alter(&$form, &$form_state, $form_id) {
+
+  $forms = array(
+    'block',
+    'contact',
+    'locale',
+    'overlay_control',
+    'picture',
+    'signature_settings',
+    'timezone',
+  );
+
+  if (variable_get('d8ux_consistent_fieldsets', 0)) {
+    foreach ($forms as $f) {
+      $form[$f]['#collapsible'] = TRUE;
+    }
+    if (variable_get('d8ux_fieldsets_collapsed', 0)) {
+      foreach ($forms as $f) {
+        $form[$f]['#collapsed'] = TRUE;
+      }
+    }
+  }
+}
+
+
 /*function d8ux_form_user_profile_form_alter(&$form, &$form_state, $form_id) {
 
   global $user;
