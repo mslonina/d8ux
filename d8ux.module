@@ -235,6 +235,14 @@ function d8ux_field_extra_fields() {
     );
   }
 
+  if (module_exists('locale')) {
+    $extra['user']['user']['form']['locale'] = array(
+      'label' => 'Language settings',
+      'description' => t('Locale module form element.'),
+      'weight' => 0,
+    );
+  }
+
   if (variable_get('user_pictures', 1) == 1) {
     $extra['user']['user']['form']['picture'] = array(
       'label' => 'User picture',

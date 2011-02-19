@@ -1,0 +1,8 @@
+/* Toolbar CSS */
+#toolbar div.toolbar-menu ul li a.parent.active:hover {
+  background: #444;
+}
+#toolbar div.toolbar-menu ul li a.parent {
+  background-image: none;
+}
+
