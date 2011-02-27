@@ -1,5 +1,4 @@
 <?php
-// $Id$
 
 /**
  * Implements hook_permission().
@@ -54,6 +53,31 @@ function d8ux_form_user_profile_form_alter(&$form, &$form_state, $form_id) {
       }
     }
   }
+/*
+  $form['d8ux'] = array(
+    '#type' => 'vertical_tabs',
+    '#title' => 'D8UX',
+  );
+  $form['d8ux_example'] = array(
+    '#type' => 'fieldset',
+    '#title' => 'test tab',
+    '#group' => 'd8ux',
+  );
+  $form['d8ux_example2'] = array(
+    '#type' => 'fieldset',
+    '#title' => 'test tab 2',
+    '#group' => 'group_account_settings',
+  );
+ */
+  /*$form['#groups']['group_account_settings']['d8ux_example2'] = array(
+    '#type' => 'fieldset',
+    '#title' => 'test tab 2',
+    '#group' => 'd8ux',
+  );*/
+
+  //$form['#groups']['group_account_settings']->children[] = 'd8ux_example2';
+  //debug($form['#groups']['group_account_settings']->children);
+  //
 }
 
 

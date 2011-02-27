@@ -1,5 +1,4 @@
 <?php
-// $id$
 
 function d8ux_admin_settings() {
 
